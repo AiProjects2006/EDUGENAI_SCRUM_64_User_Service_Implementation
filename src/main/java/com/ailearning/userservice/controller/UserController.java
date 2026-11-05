@@ -1,15 +1,21 @@
 package com.ailearning.userservice.controller;
 
+import com.ailearning.userservice.dto.request.KeycloakSyncRequest;
 import com.ailearning.userservice.dto.request.LoginRequest;
 import com.ailearning.userservice.dto.request.RegisterUserRequest;
+import com.ailearning.userservice.dto.request.TokenRefreshRequest;
 import com.ailearning.userservice.dto.request.UpdateUserRequest;
+import com.ailearning.userservice.dto.request.UpdateUserStatusRequest;
 import com.ailearning.userservice.dto.response.LoginResponse;
 import com.ailearning.userservice.dto.response.RegisterUserResponse;
 import com.ailearning.userservice.dto.response.UserProfileResponse;
+import com.ailearning.userservice.enums.Role;
 import com.ailearning.userservice.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -21,7 +27,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "Register a new user")
+    @Operation(summary = "List all users (optional filter by role)")
+    @GetMapping
+    public List<UserProfileResponse> getAllUsers(@RequestParam(required = false) Role role) {
+        return userService.getAllUsers(role);
+    }
+
+    @Operation(summary = "Register a new user in User DB and Keycloak")
     @PostMapping("/register")
     public RegisterUserResponse register(
             @Valid @RequestBody RegisterUserRequest request) {
@@ -37,11 +49,20 @@ public class UserController {
 
     @Operation(summary = "Update user profile")
     @PutMapping("/{id}")
-    public void updateUser(
+    public UserProfileResponse updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest request) {
 
-        userService.updateUser(id, request);
+        return userService.updateUser(id, request);
+    }
+
+    @Operation(summary = "Update user account status (ACTIVE, SUSPENDED, INACTIVE)")
+    @PatchMapping("/{id}/status")
+    public UserProfileResponse updateUserStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateUserStatusRequest request) {
+
+        return userService.updateUserStatus(id, request);
     }
 
     @Operation(summary = "Get user profile")
@@ -51,12 +72,28 @@ public class UserController {
         return userService.getUserProfile(id);
     }
 
-    @Operation(summary = "Login user")
+    @Operation(summary = "Authenticate user via User DB + Keycloak OIDC")
     @PostMapping("/login")
     public LoginResponse login(
             @Valid @RequestBody LoginRequest request) {
 
         return userService.login(request);
+    }
+
+    @Operation(summary = "Synchronize a Keycloak OIDC SSO token with User DB")
+    @PostMapping("/keycloak-sync")
+    public LoginResponse syncKeycloakSession(
+            @Valid @RequestBody KeycloakSyncRequest request) {
+
+        return userService.syncKeycloakSession(request);
+    }
+
+    @Operation(summary = "Refresh Keycloak OIDC access token")
+    @PostMapping("/refresh")
+    public LoginResponse refreshToken(
+            @Valid @RequestBody TokenRefreshRequest request) {
+
+        return userService.refreshToken(request);
     }
 
 }

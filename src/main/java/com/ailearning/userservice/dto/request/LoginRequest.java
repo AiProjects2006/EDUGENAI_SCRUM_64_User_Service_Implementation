@@ -1,5 +1,6 @@
 package com.ailearning.userservice.dto.request;
 
+import com.ailearning.userservice.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -11,4 +12,6 @@ public class LoginRequest {
 
     @NotBlank
     private String password;
+
+    private Role expectedRole;
 }
