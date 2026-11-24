@@ -87,6 +87,9 @@ public class User {
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
+    @Column(name = "avatar_url", columnDefinition = "LONGTEXT")
+    private String avatarUrl;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 

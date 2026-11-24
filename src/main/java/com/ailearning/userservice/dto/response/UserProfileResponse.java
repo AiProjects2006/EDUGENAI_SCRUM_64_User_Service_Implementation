@@ -30,6 +30,7 @@ public class UserProfileResponse {
     private String preferredSubjects;
     private String portfolioUrl;
     private String bio;
+    private String avatarUrl;
     private LocalDateTime createdAt;
 }
 

@@ -80,6 +80,7 @@ public class UserServiceImpl implements UserService {
                 .preferredSubjects(request.getPreferredSubjects())
                 .portfolioUrl(request.getPortfolioUrl())
                 .bio(request.getBio())
+                .avatarUrl(request.getAvatarUrl())
                 .build();
 
         user = userRepository.save(user);
@@ -147,15 +148,35 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
-        if (!user.getEmail().equalsIgnoreCase(request.getEmail())
-                && userRepository.existsByEmailIgnoreCase(request.getEmail())) {
-            throw new EmailAlreadyExistsException("Email already exists: " + request.getEmail());
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
+            if (!user.getEmail().equalsIgnoreCase(request.getEmail())
+                    && userRepository.existsByEmailIgnoreCase(request.getEmail())) {
+                throw new EmailAlreadyExistsException("Email already exists: " + request.getEmail());
+            }
+            user.setEmail(request.getEmail().trim().toLowerCase());
         }
 
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail().trim().toLowerCase());
-        user.setContactNumber(request.getContactNumber());
+        if (request.getFirstName() != null && !request.getFirstName().isBlank()) {
+            user.setFirstName(request.getFirstName().trim());
+        }
+        if (request.getLastName() != null && !request.getLastName().isBlank()) {
+            user.setLastName(request.getLastName().trim());
+        }
+        if (request.getContactNumber() != null) {
+            user.setContactNumber(request.getContactNumber());
+        }
+        if (request.getAvatarUrl() != null) {
+            user.setAvatarUrl(request.getAvatarUrl());
+        }
+        if (request.getBio() != null) {
+            user.setBio(request.getBio());
+        }
+        if (request.getQualifications() != null) {
+            user.setQualifications(request.getQualifications());
+        }
+        if (request.getSkills() != null) {
+            user.setSkills(request.getSkills());
+        }
 
         user = userRepository.save(user);
 
@@ -420,6 +441,7 @@ public class UserServiceImpl implements UserService {
                 .preferredSubjects(user.getPreferredSubjects())
                 .portfolioUrl(user.getPortfolioUrl())
                 .bio(user.getBio())
+                .avatarUrl(user.getAvatarUrl())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

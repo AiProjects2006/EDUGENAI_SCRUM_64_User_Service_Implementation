@@ -48,4 +48,6 @@ public class RegisterUserRequest {
     private String portfolioUrl;
 
     private String bio;
+
+    private String avatarUrl;
 }
