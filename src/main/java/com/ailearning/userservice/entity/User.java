@@ -3,12 +3,12 @@ package com.ailearning.userservice.entity;
 import com.ailearning.userservice.enums.Role;
 import com.ailearning.userservice.enums.UserStatus;
 import jakarta.persistence.*;
-        import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-        import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -44,7 +44,7 @@ public class User {
     private Role role;
 
     @NotBlank
-    @Size(min = 8, max = 255)
+    @Size(min = 6, max = 255)
     @Column(nullable = false)
     private String password;
 
@@ -54,15 +54,41 @@ public class User {
     private String email;
 
     @Column(name = "is_email_verified")
-    private Boolean emailVerified = false;
+    @Builder.Default
+    private Boolean emailVerified = true;
 
-    @Size(max = 10)
+    @Size(max = 20)
     @Column(name = "contact_number")
     private String contactNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "account_status", nullable = false)
-    private UserStatus accountStatus = UserStatus.PENDING_VERIFICATION;
+    @Builder.Default
+    private UserStatus accountStatus = UserStatus.ACTIVE;
+
+    @Column(name = "keycloak_user_id")
+    private String keycloakUserId;
+
+    @Column(name = "skills", length = 1000)
+    private String skills;
+
+    @Column(name = "qualifications", length = 1000)
+    private String qualifications;
+
+    @Column(name = "experience_years")
+    private Integer experienceYears;
+
+    @Column(name = "preferred_subjects", length = 500)
+    private String preferredSubjects;
+
+    @Column(name = "portfolio_url", length = 500)
+    private String portfolioUrl;
+
+    @Column(name = "bio", columnDefinition = "TEXT")
+    private String bio;
+
+    @Column(name = "avatar_url", columnDefinition = "LONGTEXT")
+    private String avatarUrl;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -74,6 +100,8 @@ public class User {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (emailVerified == null) emailVerified = true;
+        if (accountStatus == null) accountStatus = UserStatus.ACTIVE;
     }
 
     @PreUpdate

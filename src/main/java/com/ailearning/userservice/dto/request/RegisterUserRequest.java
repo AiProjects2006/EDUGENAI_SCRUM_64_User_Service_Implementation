@@ -2,6 +2,7 @@
 package com.ailearning.userservice.dto.request;
 
 import com.ailearning.userservice.enums.Role;
+import com.ailearning.userservice.enums.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -33,4 +34,20 @@ public class RegisterUserRequest {
     private String contactNumber;
 
     private Role role;
+
+    private UserStatus accountStatus;
+
+    private String skills;
+
+    private String qualifications;
+
+    private Integer experienceYears;
+
+    private String preferredSubjects;
+
+    private String portfolioUrl;
+
+    private String bio;
+
+    private String avatarUrl;
 }
